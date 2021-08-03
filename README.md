@@ -9,7 +9,7 @@ Currently, the module only support YAML-formatted files.
 
 Features:
 - Retrieve deeply nested values using dot notation, e.g. `section1.key1`
-- Retrieve deeply values using wildcards, e.g. `section1.*.key2`
+- Retrieve values using wildcards, e.g. `section1.*.key2`
 
 # Prerequisites:
 
