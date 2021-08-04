@@ -1,5 +1,6 @@
 from bertconfig.logger import Logger
 from bertconfig.dictutils import DictUtils
+from bertconfig.struct import Struct
 import os
 import re
 import sys
@@ -28,7 +29,7 @@ class SuperDuperConfig():
       construct_mapping)
     return yaml.load(stream, OrderedLoader)            
 
-  def load_config(self, config_file=None, req_keys=[], failfast=False, data_key=None, debug=False):
+  def load_config(self, config_file=None, req_keys=[], failfast=False, data_key=None, debug=False, as_object=False):
     """Load specified config file"""
     config_path_strings = [
       os.path.realpath(os.path.expanduser('~')),
@@ -83,14 +84,20 @@ class SuperDuperConfig():
         "Could not find %s, not loading values" % config_file)
 
     if config_found and config_is_valid:
-      return config_dict
+      if as_object:
+        return Struct(config_dict)
+      else:
+        return config_dict
     else:
       if failfast:
         self.logger.error(
         "Config %s is invalid. Aborting." % config_file)
         sys.exit(1)
       else:
-        return {}
+        if as_object:
+          return Struct({})
+        else:
+          return {}
               
   def get(self, yaml_input, dict_path):
     """Interpret wildcard paths for retrieving values from a dictionary object"""
