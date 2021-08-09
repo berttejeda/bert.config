@@ -1,10 +1,10 @@
 from bertdotconfig.logger import Logger
 from bertdotconfig.dictutils import DictUtils
-from bertdotconfig.struct import Struct
 import os
 import re
+from bertdotconfig.struct import Struct
 import sys
-from collections import OrderedDict 
+from jinja2 import Template
 import yaml
 
 # Setup Logging
@@ -29,8 +29,19 @@ class SuperDuperConfig():
       construct_mapping)
     return yaml.load(stream, OrderedLoader)            
 
-  def load_config(self, config_file_name=None, config_file_path=None, req_keys=[], failfast=False, data_key=None, debug=False, as_object=False):
+  def load_config(self, **kwargs):
     """Load specified config file"""
+
+    config_file_name = kwargs.get('config_file_name')
+    config_file_path = kwargs.get('config_file_path')
+    req_keys = kwargs.get('req_keys', []) 
+    failfast = kwargs.get('failfast',False) 
+    data_key = kwargs.get('data_key')
+    debug = kwargs.get('debug', False)
+    as_object = kwargs.get('as_object', False)
+    templatized = kwargs.get('templatized')
+    initial_data = kwargs.get('initial_data', {})
+
     if not config_file_path:
       config_search_paths = [
         os.path.realpath(os.path.expanduser('~')),
@@ -60,13 +71,22 @@ class SuperDuperConfig():
         config_found = True
         self.config_file_path = config_file_path
         try:
-          with open(config_file_path, 'r') as ymlfile:
-            # Preserve dictionary order for python 2
-            # https://stackoverflow.com/questions/5121931/in-python-how-can-you-load-yaml-mappings-as-ordereddicts
-            if sys.version_info[0] < 3:
-              cfg = self.ordered_load(ymlfile, yaml.Loader)
-            else:
-              cfg = yaml.load(ymlfile, yaml.Loader)
+          ymlfile_content = open(config_file_path).read()
+          if templatized:
+            try:
+              ymlfile_template = Template(ymlfile_content)
+              ymlfile_data = ymlfile_template.render(
+                session=initial_data
+              )
+            except Exception as e:
+              logger.warning("I had trouble rendering the config, error was %s" % e)
+              if failfast:
+                sys.exit(1)
+              else:
+                ymlfile_data = ymlfile_content
+          else:
+            ymlfile_data = ymlfile_content    
+          cfg = yaml.safe_load(ymlfile_data)
           config_dict = cfg[data_key] if data_key is not None else cfg
           config_dict['config_file_path'] = self.config_file_path
           config_is_valid = all([m[m.keys()[0]].get(k) for k in req_keys for m in config_dict])
@@ -96,9 +116,9 @@ class SuperDuperConfig():
 
     if config_found and config_is_valid:
       if as_object:
-        return Struct(config_dict)
+        config_data = Struct(config_dict)
       else:
-        return config_dict
+        config_data = config_dict
     else:
       if failfast:
         self.logger.error(
@@ -106,9 +126,11 @@ class SuperDuperConfig():
         sys.exit(1)
       else:
         if as_object:
-          return Struct({})
+          config_data = Struct({})
         else:
-          return {}
+          config_data = {}
+
+    return config_data
               
   def get(self, yaml_input, dict_path):
     """Interpret wildcard paths for retrieving values from a dictionary object"""
