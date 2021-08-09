@@ -1,6 +1,6 @@
-from bertconfig.logger import Logger
-from bertconfig.dictutils import DictUtils
-from bertconfig.struct import Struct
+from bertdotconfig.logger import Logger
+from bertdotconfig.dictutils import DictUtils
+from bertdotconfig.struct import Struct
 import os
 import re
 import sys
