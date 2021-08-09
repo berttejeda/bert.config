@@ -1,6 +1,6 @@
-from bertconfig import SuperDuperConfig
+from bertdotconfig import SuperDuperConfig
 # Initialize Config Module
-superconf = SuperDuperConfig(config_name='myconfig')
+superconf = SuperDuperConfig()
 # Initialize App Config
 config = superconf.load_config('~/myconfig.yaml')
 settings = superconf.get(config, 'section1.subsection1.item2')

@@ -18,11 +18,11 @@ Features:
 
 # Installation
 
-* From pypi: `pip3 install bertconfig`
-* From this git repo: `pip3 install git+https://github.com/berttejeda/bertconfig.git`<br />
+* From pypi: `pip3 install bertdotconfig`
+* From this git repo: `pip3 install git+https://github.com/berttejeda/bert.config.git`<br />
   Note: To install a specific version of the library from this git repo, <br />
   suffix the git URL in the above command with @{ tag name }, e.g.: <br />
-  git+https://github.com/berttejeda/bertconfig.git@1.0.0
+  git+https://github.com/berttejeda/bert.config.git@1.0.0
 
 # Usage Examples
 
@@ -39,9 +39,9 @@ section1:
 ```
 
 ```python
-from bertconfig import SuperDuperConfig
+from bertdotconfig import SuperDuperConfig
 # Initialize Config Module
-superconf = SuperDuperConfig(config_name='myconfig')
+superconf = SuperDuperConfig()
 # Initialize App Config
 config = superconf.load_config('~/myconfig.yaml')
 key1 = superconf.get(config, 'section1.key1')
@@ -72,9 +72,9 @@ section2:
 ```
 
 ```python
-from bertconfig import SuperDuperConfig
+from bertdotconfig import SuperDuperConfig
 # Initialize Config Module
-superconf = SuperDuperConfig(config_name='myconfig')
+superconf = SuperDuperConfig()
 # Initialize App Config
 config = superconf.load_config('~/myconfig.yaml')
 settings = superconf.get(config, 'section1.subsection1.item2')
@@ -107,9 +107,9 @@ section2:
 ```
 
 ```python
-from bertconfig import SuperDuperConfig
+from bertdotconfig import SuperDuperConfig
 # Initialize Config Module
-superconf = SuperDuperConfig(config_name='myconfig')
+superconf = SuperDuperConfig()
 # Initialize App Config
 config = superconf.load_config('~/myconfig.yaml')
 settings = superconf.get(config, 'section1.*.item1')
@@ -119,3 +119,12 @@ print(settings)
 The above should return `[{'subitem1': 'value1'}, 'value1']`
 
 Note: When retrieving values via wildcard, the return value is a list object.
+
+## Load a configuration file as a python object
+
+Same as the above examples, just call the 
+load_config method with as_object=True, as with `superconf.load_config('~/myconfig.yaml', as_object=True)`
+
+Retrieving values from the object would require dot-notation, as with: `print(settings.section1.subsection1.item2)`
+
+Note: This approach does not support retrieving values via wildcard reference.
