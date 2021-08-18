@@ -24,7 +24,7 @@ class DictUtils:
               dct[k] = merge_dct[k]
       return dct
 
-    def get(self, yaml_input, dict_path):
+    def get(self, yaml_input, dict_path, default=None):
       """Interpret wildcard paths for retrieving values from a dictionary object"""
       if '.*.' in dict_path:
         try:
@@ -36,18 +36,18 @@ class DictUtils:
             for d in ds:
               sub_path_string = '{s}.{dd}.{dv}'.format(s=path_string, dd=d, dv=ks[1])
               self.logger.debug('Path string is: %s' % sub_path_string)
-              result = self.recurse(yaml_input, sub_path_string)
+              result = self.recurse(yaml_input, sub_path_string, default)
               if result:
                 data.append(result)
             return data
           else:
-            data = self.recurse(yaml_input, dict_path)
+            data = self.recurse(yaml_input, dict_path, default)
             if not isinstance(data, dict):
               return {}
         except Exception as e:
           raise(e)
       else:
-        return self.recurse(yaml_input, dict_path)
+        return self.recurse(yaml_input, dict_path, default)
 
     def recurse(self, data_input, keys, default=None):
         """Recursively retrieve values from a dictionary object"""
