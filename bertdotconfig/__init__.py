@@ -18,7 +18,8 @@ class SuperDuperConfig(DictUtils):
     self.logger = logger
     self.DictUtils = DictUtils()
     self.extra_config_search_paths = kwargs.get('extra_config_search_paths', '')
-    self.webadapter = WebAdapter()
+    self.verify_tls = kwargs.get('verify_tls', True)
+    self.webadapter = WebAdapter(verify_tls=self.verify_tls)
 
   def render_config(self, **kwargs):
 
