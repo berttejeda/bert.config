@@ -6,6 +6,7 @@ class Logger:
 
   def __init__(self, **kwargs):
     self.debug = kwargs.get('debug', False)
+    self.is_main_logger = kwargs.get('is_main_logger', False)
 
   def init_logger(self, name=None, debug=False):
     # Setup Logging
@@ -19,5 +20,7 @@ class Logger:
     streamhandler.setFormatter(
         logging.Formatter("%(asctime)s %(name)s [%(levelname)s]: %(message)s", datefmt='%Y-%m-%d %H:%M:%S')
     )
-    logger.addHandler(streamhandler)
+    # logger.propagate = False
+    if self.is_main_logger:
+      logger.addHandler(streamhandler)
     return logger
