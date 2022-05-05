@@ -10,11 +10,8 @@ class ConfigUtils:
 
     def __init__(self, **kwargs):
 
-        self.as_object = kwargs.get('as_object')
-        if self.as_object:
-            self.obj = Struct(kwargs.get('dict_input', {}))
-        else:
-            self.obj = kwargs.get('dict_input', {})
+        self.obj = kwargs.get('dict_input', {})
+        self.properties = Struct(self.obj)
         self.logger = logger
 
     def merge(self, merge_dct):
@@ -59,10 +56,7 @@ class ConfigUtils:
                             result = self.recurse(self.obj, sub_path_string, default)
                             if result:
                                 data.append(result)
-                        if self.as_object:
-                            return Struct(data)
-                        else:
-                            return data
+                        return data
                     else:
                         data = self.recurse(self.obj, dict_path, default)
                         if not isinstance(data, dict):
@@ -71,10 +65,7 @@ class ConfigUtils:
                     raise(e)
             else:
                 data = self.recurse(self.obj, dict_path, default)
-                if self.as_object:
-                    return Struct(data)
-                else:
-                    return(data)
+                return data
         else:
             self.logger.error('Input must be of type "dict"')
             return {}

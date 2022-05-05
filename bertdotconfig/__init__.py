@@ -32,7 +32,6 @@ class Config(SuperDuperConfig):
     self.req_keys = kwargs.get('req_keys', [])
     self.failfast = kwargs.get('failfast',False)
     self.data_key = kwargs.get('data_key')
-    self.as_object = kwargs.get('as_object', False)
     self.templatized = kwargs.get('templatized')
     self.config_file_auth_username = kwargs.get('auth_username')
     self.config_file_auth_password = kwargs.get('auth_password')

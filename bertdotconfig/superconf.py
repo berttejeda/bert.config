@@ -84,7 +84,7 @@ class SuperDuperConfig:
         config_content=config_res
       )
 
-      return ConfigUtils(as_object=self.as_object, dict_input=config_dict).obj
+      return ConfigUtils(dict_input=config_dict)
 
     else:
 
@@ -167,4 +167,4 @@ class SuperDuperConfig:
             )
             if external_settings:
               config_data = self.merge(config_data, external_settings)
-    return ConfigUtils(as_object=self.as_object, dict_input=config_dict).obj
+    return ConfigUtils(dict_input=config_dict)
