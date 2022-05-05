@@ -5,16 +5,16 @@
 
 This is a module for reading configuration files.
 
-Currently, the module only support YAML-formatted files.
+Currently, the module only supports YAML-formatted files.
 
 Features:
 - Retrieve deeply nested values using dot notation, e.g. `section1.key1`
 - Retrieve values using wildcards, e.g. `section1.*.key2`
+- Configuration files can be templated (Jinja)
 
 # Prerequisites:
 
-- Python 2.7+
-- pyaml
+- Python 3.4+
 
 # Installation
 
@@ -22,7 +22,7 @@ Features:
 * From this git repo: `pip3 install git+https://github.com/berttejeda/bert.config.git`<br />
   Note: To install a specific version of the library from this git repo, <br />
   suffix the git URL in the above command with @{ tag name }, e.g.: <br />
-  git+https://github.com/berttejeda/bert.config.git@1.0.0
+  git+https://github.com/berttejeda/bert.config.git@3.0.0
 
 # Usage Examples
 
@@ -39,14 +39,14 @@ section1:
 ```
 
 ```python
-from bertdotconfig import SuperDuperConfig
-# Initialize Config Module
-superconf = SuperDuperConfig()
+from bertdotconfig import Config
 # Initialize App Config
-config = superconf.load_config('~/myconfig.yaml')
-key1 = superconf.get(config, 'section1.key1')
-print(key1)
+config = Config(config_file_uri='~/myconfig.yaml').read()
+value = config.get('section1.key')
+print(value)
 ```
+
+The above should return `value1`
 
 ## Load a configuration file and retrieve a deeply nested value
 
@@ -72,13 +72,11 @@ section2:
 ```
 
 ```python
-from bertdotconfig import SuperDuperConfig
-# Initialize Config Module
-superconf = SuperDuperConfig()
+from bertdotconfig import Config
 # Initialize App Config
-config = superconf.load_config('~/myconfig.yaml')
-settings = superconf.get(config, 'section1.subsection1.item2')
-print(settings)
+config = Config(config_file_uri='~/myconfig.yaml').read()
+value = config.get('section1.subsection1.item2')
+print(value)
 ```
 
 The above should return `value2`
@@ -107,13 +105,11 @@ section2:
 ```
 
 ```python
-from bertdotconfig import SuperDuperConfig
-# Initialize Config Module
-superconf = SuperDuperConfig()
+from bertdotconfig import Config
 # Initialize App Config
-config = superconf.load_config('~/myconfig.yaml')
-settings = superconf.get(config, 'section1.*.item1')
-print(settings)
+config = Config(config_file_uri='~/myconfig.yaml').read()
+value = config.get('section1.*.item1')
+print(value)
 ```
 
 The above should return `[{'subitem1': 'value1'}, 'value1']`
@@ -122,9 +118,12 @@ Note: When retrieving values via wildcard, the return value is a list object.
 
 ## Load a configuration file as a python object
 
-Same as the above examples, just call the 
-load_config method with as_object=True, as with `superconf.load_config('~/myconfig.yaml', as_object=True)`
+Same as the above examples, just invoke the Config object
+with `as_object=True`, as with 
+`config = Config('~/myconfig.yaml', as_object=True).read()`
 
-Retrieving values from the object would require dot-notation, as with: `print(settings.section1.subsection1.item2)`
+In this case, retrieving values from the object can be done via dot-notation, 
+as with: `print(config.section1.subsection1.item2)`, or via `get` method, as with
+`print(settings.section1.subsection1.item2)`
 
 Note: This approach does not support retrieving values via wildcard reference.

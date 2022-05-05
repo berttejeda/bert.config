@@ -1,0 +1,15 @@
+section1:
+  subsection1:
+    item1:
+      subitem1: value1
+    item2: value2
+    item3: value3
+  subsection2:
+    item1: value1
+    item2: value2
+    item3: value3
+  key1: value1
+  key2: value2
+  key3: value3
+section2:
+  item1: value1
