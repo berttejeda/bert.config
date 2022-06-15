@@ -35,5 +35,6 @@ class Config(SuperDuperConfig):
     self.templatized = kwargs.get('templatized')
     self.config_file_auth_username = kwargs.get('auth_username')
     self.config_file_auth_password = kwargs.get('auth_password')
+    self.configs_already_processed = []
     self.default_value = kwargs.get('default_value', {})
 

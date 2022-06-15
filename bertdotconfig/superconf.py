@@ -1,6 +1,6 @@
 from bertdotconfig.logger import Logger
 from bertdotconfig.configutils import ConfigUtils
-import os
+from bertdotconfig.configloader import ConfigLoader
 import sys
 from jinja2 import Template
 import yaml
@@ -8,7 +8,7 @@ import yaml
 # Setup Logging
 logger = Logger().init_logger(__name__)
 
-class SuperDuperConfig:
+class SuperDuperConfig(ConfigLoader):
 
   def render(self, **kwargs):
 
@@ -64,107 +64,48 @@ class SuperDuperConfig:
 
   def read(self, **kwargs):
     """Load specified config file"""
-    
-    config_found = False
-    config_file_uris = []
 
-    if self.config_file_uri.startswith('http'):
+    pre_existing_config_data = kwargs.get('pre_existing_config_data')
+    config_file_uri = kwargs.get('config_file_uri', self.config_file_uri)
+    config_file_auth_username = kwargs.get('config_file_auth_username')
+    config_file_auth_password = kwargs.get('config_file_auth_password')
 
-      if self.config_file_auth_username and self.config_file_auth_password:
-        config_res = self.webadapter.get(
-          self.config_file_uri,
-          username=self.config_file_auth_username,
-          password=self.config_file_auth_password
-        )
-      else:
-        config_res = self.webadapter.get(self.config_file_uri)
+    if config_file_uri in self.configs_already_processed:
+      logger.info(f'Already processed {config_file_uri}, skipping ...')
+      return
 
-      config_dict, config_is_valid, invalid_keys = self.render(
-        uri=self.config.config_file_uri,
-        config_content=config_res
+    if config_file_uri.startswith('http'):
+      config_data = self.load_from_web(
+      config_file_uri,
+      config_file_auth_username=config_file_auth_username,
+      config_file_auth_password=config_file_auth_password
       )
-
-      return ConfigUtils(dict_input=config_dict)
-
     else:
+      config_data = self.load(config_file_uri)
 
-      if not os.path.exists(self.config_file_uri):
-        config_search_paths = [
-          os.path.realpath(os.path.expanduser('~')),
-          '.',
-          os.path.join(os.path.abspath(os.sep), 'etc')
-        ]
-        if self.extra_config_search_paths:
-          if isinstance(self.extra_config_search_paths, list):
-            config_search_paths += self.extra_config_search_paths
-          elif isinstance(self.extra_config_search_paths, str):
-            config_search_paths += [self.extra_config_search_paths]
-          else:
-            self.logger.error(
-              'extra_config_search_paths must \
-              be of type str or list'
-            )
-            sys.exit(1)
-
-        config_file_uris = [
-          os.path.expanduser(os.path.join(p, self.config_file_uri))
-          for p in config_search_paths
-        ]
-      else:
-        config_file_uris = [self.config_file_uri]
-        config_found = True
-
-    for cf_uri in config_file_uris:
-      config_exists = config_found or os.path.exists(cf_uri)
-      if config_exists:
-        config_found = True
-        config_dict, config_is_valid, invalid_keys = self.render(
-          uri=cf_uri,
-          templatized=self.templatized,
-          failfast=self.failfast,
-          data_key=self.data_key,
-          initial_data=self.initial_data,
-          req_keys=self.req_keys
-        )
-        break
-
-    if not config_found and self.failfast:
-      self.logger.error(
-        "Could not find any config file in \
-        specified search paths. Aborting."
-      )
-      sys.exit(1)
-
-    if config_found and config_is_valid:
-      config_data = config_dict
-    else:
-      if self.failfast:
-        self.logger.error(
-          "Aborting due to invalid or not found \
-          config(s) [%s]" % ','.join(config_file_uris)
-        )
-        sys.exit(1)
-      else:
-        logger.warning('No settings could be derived, using defaults')
-        config_data = self.default_value
+    if pre_existing_config_data and not config_data:
+      return pre_existing_config_data
 
     external_configs = config_data.get('external_configs', [])
 
     if len(external_configs) > 0:
-      logger.info('Loading external configs')
+      logger.info(f'External configs are being referenced in {config_file_uri}')
       for external_config in external_configs:
         if isinstance(external_config, dict):
           config_uri = external_config.get('uri')
+          logger.info(f'Loading {config_uri} ...')
           if config_uri:
             config_uri_username = external_config.get('auth',{}).get('username')
             config_uri_password = external_config.get('auth',{}).get('password')
+            templatized = external_config.get('templatized')
             external_settings = self.read(
               config_file_uri=config_uri,
-              auth_username=config_uri_username,
-              auth_password=config_uri_password,
-              templatized=self.templatized,
-              initial_data=self.initial_data
+              config_file_auth_username=config_uri_username,
+              config_file_auth_password=config_uri_password,
+              templatized=templatized,
+              initial_data=self.initial_data,
+              pre_existing_config_data=config_data
             )
-            if external_settings:
-              config_data = self.merge(config_data, external_settings)
-    return ConfigUtils(dict_input=config_dict)
+            if hasattr(external_settings, 'merge'):
+              config_data = external_settings.merge(config_data)
+    return ConfigUtils(dict_input=config_data)
