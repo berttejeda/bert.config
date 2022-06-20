@@ -108,4 +108,7 @@ class SuperDuperConfig(ConfigLoader):
             )
             if hasattr(external_settings, 'merge'):
               config_data = external_settings.merge(config_data)
-    return ConfigUtils(dict_input=config_data)
+    if isinstance(config_data, ConfigUtils):
+      return config_data
+    else:
+      return ConfigUtils(dict_input=config_data)

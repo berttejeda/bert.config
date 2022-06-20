@@ -66,13 +66,14 @@ class ConfigUtils:
         :return: None
         """
         for k, v in incoming_dct.items():
-            source_is_dict = isinstance(self.dict[k], dict)
+            my_key = self.dict.get(k)
+            source_is_dict = isinstance(my_key, dict)
             incoming_is_dict = isinstance(incoming_dct[k], dict)
-            if (k in self.dict and source_is_dict
+            if (k in self.dict.keys() and source_is_dict
                     and incoming_is_dict):
-                self.merge(self.dict.dict[k], incoming_dct[k])
+                self.merge(my_key, incoming_dct[k])
             else:
-                self.dict.dict[k] = incoming_dct[k]
+                self.dict[k] = incoming_dct[k]
         return self.dict
 
     def update(self, dict_path, default=None):
