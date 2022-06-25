@@ -10,10 +10,6 @@ class ConfigUtils:
     def __init__(self, **kwargs):
 
         self.dict = kwargs.get('dict_input', {})
-        if isinstance(self.dict, ConfigUtils):
-            self.struct = self.dict.struct
-        else:
-            self.struct = Struct(self.dict)
         self.logger = logger
 
     def __iter__(self):
@@ -56,25 +52,79 @@ class ConfigUtils:
         else:
             return None
 
-    def merge(self, incoming_dct):
+    # def set_nested_attribute(self, nested_attr_k, nested_attr_v):
+    #     if isinstance(dict, nested_attr_v):
+    #         self.set_nested_attribute(nested_attr_v)
+    #         setattr(self, nested_attr_k)
+    #     print(nested_attr_v)
+
+    def set_attributes(self, incoming_obj, **kwargs):
+        """ Set attributes on self from key/values in incoming_dict
+        :param self: Object onto which the attributes are ascribed
+        :param incoming_dct: dictionary object used for the inputs
+        :return: None
+        """
+        nested_attribute = kwargs.get('nested_attribute')
+        nested_attribute_is_dict = kwargs.get('nested_attribute_is_dict')
+        nested_attribute_is_list = kwargs.get('nested_attribute_is_list')
+        nested_attribute_key_exists = kwargs.get('nested_attribute_key_exists')
+        children = kwargs.get('children')
+        if nested_attribute and nested_attribute_is_dict:
+            if hasattr(self, nested_attribute):
+                new_nested_attribute = self.merge(self.topics.__dict__, source_dict=incoming_obj)
+                setattr(self, nested_attribute, Struct(new_nested_attribute))
+            else:
+                setattr(self, nested_attribute, Struct(incoming_obj))
+        elif nested_attribute and nested_attribute_is_list and not children:
+            if len(incoming_obj) > 0:
+                self.set_attributes(incoming_obj, nested_attribute=nested_attribute, children=True)
+            else:
+                setattr(self, nested_attribute, [])
+        else:
+            if isinstance(incoming_obj, dict) or isinstance(incoming_obj, ConfigUtils) :
+                for k, v in incoming_obj.items():
+                    in_v = incoming_obj.get(k)
+                    attribute_is_dict = isinstance(in_v, dict)
+                    attribute_is_list = isinstance(in_v, list)
+                    if attribute_is_dict or attribute_is_list:
+                        self.set_attributes(
+                            in_v, nested_attribute=k,
+                            nested_attribute_is_dict=attribute_is_dict,
+                            nested_attribute_is_list=attribute_is_list
+                        )
+                    else:
+                        setattr(self, k, in_v)
+            if isinstance(incoming_obj, list):
+                for e in incoming_obj:
+                    attribute_is_dict = isinstance(e, dict)
+                    attribute_is_list = isinstance(e, list)
+                    if attribute_is_dict or attribute_is_list:
+                        self.set_attributes(
+                            e, nested_attribute=nested_attribute,
+                            nested_attribute_is_dict=attribute_is_dict,
+                            nested_attribute_is_list=attribute_is_list
+                        )
+
+    def merge(self, incoming_dct, **kwargs):
         """ Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
         updating only top-level keys, dict_merge recurses down into dicts nested
         to an arbitrary depth, updating keys. The ``incoming_dct`` is merged into
         ``self.dict``.
         :param self.dict: dict onto which the merge is executed
         :param incoming_dct: self.dict merged into self.dict
-        :return: None
+        :return: merged_dict
         """
+        new_dict = kwargs.get('source_dict', self.dict)
         for k, v in incoming_dct.items():
-            my_key = self.dict.get(k)
+            my_key = new_dict.get(k)
             source_is_dict = isinstance(my_key, dict)
             incoming_is_dict = isinstance(incoming_dct[k], dict)
-            if (k in self.dict.keys() and source_is_dict
+            if (k in new_dict.keys() and source_is_dict
                     and incoming_is_dict):
                 self.merge(my_key, incoming_dct[k])
             else:
-                self.dict[k] = incoming_dct[k]
-        return self.dict
+                new_dict[k] = incoming_dct[k]
+        return new_dict
 
     def update(self, dict_path, default=None):
         """Interpret wildcard paths for setting values in a dictionary object"""

@@ -24,7 +24,7 @@ class ConfigLoader:
             config_res = self.webadapter.get(config_file_uri)
 
         if not config_res:
-            return None
+            return {}
 
         config_dict, config_is_valid, invalid_keys = self.render(
             uri=config_file_uri,
@@ -35,6 +35,8 @@ class ConfigLoader:
 
         if config_dict:
             return ConfigUtils(dict_input=config_dict)
+        else:
+            return {}
 
     def load(self, config_file_uri):
         """Load specified config file from filesystem"""
