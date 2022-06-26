@@ -1,4 +1,4 @@
-from bertdotconfig.configutils import ConfigUtils
+from bertdotconfig.configutils import AttrDict
 from bertdotconfig.logger import Logger
 import os
 import sys
@@ -34,7 +34,7 @@ class ConfigLoader:
         self.configs_already_processed.append(config_file_uri)
 
         if config_dict:
-            return ConfigUtils(dict_input=config_dict)
+            return AttrDict(config_dict)
         else:
             return {}
 

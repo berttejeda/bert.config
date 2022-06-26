@@ -1,6 +1,5 @@
 from bertdotconfig.logger import Logger
 import os
-from bertdotconfig.configutils import ConfigUtils
 from bertdotconfig.superconf import SuperDuperConfig
 from bertdotwebadapter import WebAdapter
 

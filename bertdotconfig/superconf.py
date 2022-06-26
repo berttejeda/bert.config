@@ -1,5 +1,5 @@
 from bertdotconfig.logger import Logger
-from bertdotconfig.configutils import ConfigUtils
+from bertdotconfig.configutils import AttrDict
 from bertdotconfig.configloader import ConfigLoader
 import sys
 from jinja2 import Template
@@ -106,12 +106,9 @@ class SuperDuperConfig(ConfigLoader):
               initial_data=self.initial_data,
               pre_existing_config_data=config_data
             )
-            if isinstance(external_settings, ConfigUtils):
+            if isinstance(external_settings, dict):
               config_data = external_settings.merge(config_data)
-    if isinstance(config_data, ConfigUtils):
-      config_data.set_attributes(config_data)
-      return config_data
+              return config_data
     else:
-      config_data = ConfigUtils(dict_input=config_data)
-      config_data.set_attributes(config_data)
+      config_data = AttrDict(config_data)
       return config_data
