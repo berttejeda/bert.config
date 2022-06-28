@@ -58,7 +58,7 @@ class AttrDict(dict):
         myKey, restOfKey = k.split('.', 1)
         target = super(AttrDict, self).get(myKey, default)
         if not isinstance(target, AttrDict):
-            return None
+            return default
         return target[restOfKey]
 
     @staticmethod
