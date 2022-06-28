@@ -52,26 +52,30 @@ class AttrDict(dict):
             self[key] = default
         return self[key]
 
-    def merge(self, incoming_dct, **kwargs):
-        """ Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
-        updating only top-level keys, dict_merge recurses down into dicts nested
-        to an arbitrary depth, updating keys. The ``incoming_dct`` is merged into
-        ``self.dict``.
-        :param self.dict: dict onto which the merge is executed
-        :param incoming_dct: self.dict merged into self.dict
-        :return: merged_dict
-        """
-        new_dict = kwargs.get('source_dict', self)
-        for k, v in incoming_dct.items():
-            my_key = new_dict.get(k)
-            source_is_dict = isinstance(my_key, dict)
-            incoming_is_dict = isinstance(incoming_dct[k], dict)
-            if (k in new_dict.keys() and source_is_dict
-                    and incoming_is_dict):
-                self.merge(my_key, source_dict=incoming_dct[k])
+    def get(self, k, default=None):
+        if '.' not in k:
+            return super(AttrDict, self).get(k, default)
+        myKey, restOfKey = k.split('.', 1)
+        target = super(AttrDict, self).get(myKey, default)
+        if not isinstance(target, AttrDict):
+            return None
+        return target[restOfKey]
+
+    @staticmethod
+    def merge(a, b, path=None):
+        "merges b into a"
+        if path is None: path = []
+        for key in b:
+            if key in a:
+                if isinstance(a[key], dict) and isinstance(b[key], dict):
+                    AttrDict.merge(a[key], b[key], path + [str(key)])
+                elif a[key] == b[key]:
+                    pass  # same leaf value
+                else:
+                    pass
             else:
-                new_dict[k] = incoming_dct[k]
-        return new_dict
+                a[key] = b[key]
+        return AttrDict(a)
 
     def update(self, dict_path, default=None):
         """Interpret wildcard paths for setting values in a dictionary object"""
@@ -79,7 +83,11 @@ class AttrDict(dict):
         if isinstance(self.dict, dict):
             result = reduce(lambda d, key: d.get(key, default) if isinstance(
                 d, dict) else default, dict_path.split('.'), self.dict)
-        return(result)
+
+        if isinstance(result, dict):
+            return AttrDict(result)
+        else:
+            return result
 
     __setattr__ = __setitem__
     __getattr__ = __getitem__

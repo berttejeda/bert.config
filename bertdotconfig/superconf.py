@@ -107,7 +107,7 @@ class SuperDuperConfig(ConfigLoader):
               pre_existing_config_data=config_data
             )
             if isinstance(external_settings, dict):
-              config_data = external_settings.merge(config_data)
+              config_data = AttrDict.merge(config_data, external_settings)
               return config_data
     else:
       config_data = AttrDict(config_data)
