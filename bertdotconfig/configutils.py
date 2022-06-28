@@ -33,17 +33,19 @@ class AttrDict(dict):
         if '.' not in key:
             return dict.__getitem__(self, key)
         myKey, restOfKey = key.split('.', 1)
-        target = dict.__getitem__(self, myKey)
-        if not isinstance(target, AttrDict):
-            raise(KeyError, 'cannot get "%s" in "%s" (%s)' % (restOfKey, myKey, repr(target)))
+        try:
+            target = dict.__getitem__(self, myKey)
+        except KeyError:
+            return None
         return target[restOfKey]
 
     def __contains__(self, key):
         if '.' not in key:
             return dict.__contains__(self, key)
         myKey, restOfKey = key.split('.', 1)
-        target = dict.__getitem__(self, myKey)
-        if not isinstance(target, AttrDict):
+        try:
+            target = dict.__getitem__(self, myKey)
+        except KeyError:
             return False
         return restOfKey in target
 
