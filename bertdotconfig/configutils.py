@@ -61,7 +61,7 @@ class AttrDict(dict):
         target = super(AttrDict, self).get(myKey, default)
         if not isinstance(target, AttrDict):
             return default
-        return target[restOfKey]
+        return target.get(restOfKey, default)
 
     @staticmethod
     def merge(a, b, path=None):
