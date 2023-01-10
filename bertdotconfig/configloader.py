@@ -74,7 +74,6 @@ class ConfigLoader:
             config_exists = config_found or os.path.exists(cf_uri)
             if config_exists:
                 config_found = True
-                logger.info(f'Found config at {cf_uri}')
                 self.configs_already_processed.append(cf_uri)
                 config_dict, config_is_valid, invalid_keys = self.render(
                     uri=cf_uri,

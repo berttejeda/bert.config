@@ -42,7 +42,15 @@ class SuperDuperConfig(ConfigLoader):
         ymlfile_data = ymlfile_content
       cfg = yaml.safe_load(ymlfile_data)
       config_dict = cfg[self.data_key] if self.data_key is not None else cfg
-      config_dict['config_file_uri'] = config_file_uri
+      if isinstance(config_dict, dict):
+        config_dict['config_file_uri'] = config_file_uri
+      else:
+        _config_dict = [e for e in config_dict if isinstance(e, dict)]
+        if len(_config_dict) >= 0:
+          config_dict = config_dict[0]
+          config_dict['config_file_uri'] = config_file_uri
+        else:
+          logger.warning("Got unexpected data structure from config dictionary, not setting 'config_file_uri' key")
       invalid_keys = [m[m.keys()[0]].get(k) for k in self.req_keys for m in config_dict if m[m.keys()[0]].get(k)]
       config_is_valid = len(invalid_keys) == 0
       self.logger.debug(f"Found config file - {config_file_uri}")
