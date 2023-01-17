@@ -79,7 +79,7 @@ class SuperDuperConfig(ConfigLoader):
     config_file_auth_password = kwargs.get('config_file_auth_password')
 
     if config_file_uri in self.configs_already_processed:
-      logger.info(f'Already processed {config_file_uri}, skipping ...')
+      logger.debug(f'Already processed {config_file_uri}, skipping ...')
       return
 
     if config_file_uri.startswith('http'):
@@ -97,11 +97,11 @@ class SuperDuperConfig(ConfigLoader):
     external_configs = config_data.get('external_configs', [])
 
     if len(external_configs) > 0:
-      logger.info(f'External configs are being referenced in {config_file_uri}')
+      logger.debug(f'External configs are being referenced in {config_file_uri}')
       for external_config in external_configs:
         if isinstance(external_config, dict):
           config_uri = external_config.get('uri')
-          logger.info(f'Loading {config_uri} ...')
+          logger.debug(f'Loading {config_uri} ...')
           if config_uri:
             config_uri_username = external_config.get('auth',{}).get('username')
             config_uri_password = external_config.get('auth',{}).get('password')

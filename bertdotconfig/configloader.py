@@ -68,7 +68,7 @@ class ConfigLoader:
         else:
             config_file_uris = [config_file_uri]
             config_found = True
-            logger.info(f'Found config at {config_file_uri}')
+            logger.debug(f'Found config at {config_file_uri}')
 
         for cf_uri in config_file_uris:
             config_exists = config_found or os.path.exists(cf_uri)
@@ -102,7 +102,7 @@ class ConfigLoader:
                 )
                 sys.exit(1)
             else:
-                logger.warning('No settings could be derived, using defaults')
+                logger.debug('Warning: No settings could be derived, using defaults')
                 config_data = self.default_value
 
         return config_data
