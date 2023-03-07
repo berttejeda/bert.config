@@ -65,7 +65,10 @@ class AttrDict(dict):
 
     @staticmethod
     def merge(a, b, path=None):
-        "merges b into a"
+        """merges b into a"""
+
+        if not all([a,b]):
+            return AttrDict(a)
         if path is None: path = []
         for key in b:
             if key in a:
