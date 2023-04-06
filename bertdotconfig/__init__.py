@@ -16,18 +16,10 @@ class Config(SuperDuperConfig):
     self.webadapter = WebAdapter(verify_tls=self.verify_tls)
     self.args = kwargs.get('args', {})
     self.config_is_templatized = self.args.get('is_template', False) or kwargs.get('is_template', False)
-    cwd = os.getcwd()
-    config_dir_name = kwargs.get('config_dir_name', '')
-    config_file_path_home = os.path.expanduser(
-      "~/%s" % config_dir_name
-    )
-    self.config_file_search_paths = [
-      cwd,
-      os.path.expanduser('~'),
-      config_file_path_home
-    ]
     self.extra_config_search_paths = kwargs.get('extra_config_search_paths', '')
-    self.config_file_uri = kwargs.get('config_file_uri')
+    config_file_uri = kwargs.get('config_file_uri')
+    if config_file_uri:
+      self.config_file_uri = os.path.expanduser(config_file_uri)
     self.req_keys = kwargs.get('req_keys', [])
     self.failfast = kwargs.get('failfast',False)
     self.data_key = kwargs.get('data_key')
