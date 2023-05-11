@@ -1,7 +1,7 @@
 from btconfig.logger import Logger
 import os
 from btconfig.superconf import SuperDuperConfig
-from bertdotwebadapter import WebAdapter
+from btweb import WebAdapter
 
 # Setup Logging
 logger = Logger(is_main_logger=True).init_logger(__name__)
