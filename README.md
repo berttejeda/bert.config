@@ -18,7 +18,7 @@ Features:
 
 # Installation
 
-* From pypi: `pip3 install bertdotconfig`
+* From pypi: `pip3 install btconfig`
 * From this git repo: `pip3 install git+https://github.com/berttejeda/bert.config.git`<br />
   Note: To install a specific version of the library from this git repo, <br />
   suffix the git URL in the above command with @{ tag name }, e.g.: <br />
@@ -39,7 +39,7 @@ section1:
 ```
 
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='~/myconfig.yaml').read()
 value = config.get('section1.key')
@@ -72,7 +72,7 @@ section2:
 ```
 
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='~/myconfig.yaml').read()
 value = config.get('section1.subsection1.item2')
@@ -105,7 +105,7 @@ section2:
 ```
 
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='~/myconfig.yaml').read()
 value = config.get('section1.*.item1')

@@ -1,4 +1,4 @@
-from bertdotconfig import SuperDuperConfig
+from btconfig import SuperDuperConfig
 # Initialize Config Module
 superconf = SuperDuperConfig()
 # Initialize App Config

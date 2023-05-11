@@ -1,6 +1,6 @@
-from bertdotconfig.logger import Logger
-from bertdotconfig.configutils import AttrDict
-from bertdotconfig.configloader import ConfigLoader
+from btconfig.logger import Logger
+from btconfig.configutils import AttrDict
+from btconfig.configloader import ConfigLoader
 import sys
 from jinja2 import Template
 import yaml

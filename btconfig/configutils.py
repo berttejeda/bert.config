@@ -1,4 +1,4 @@
-from bertdotconfig.logger import Logger
+from btconfig.logger import Logger
 from functools import reduce
 
 # Setup Logging

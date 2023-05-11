@@ -1,6 +1,6 @@
-from bertdotconfig.logger import Logger
+from btconfig.logger import Logger
 import os
-from bertdotconfig.superconf import SuperDuperConfig
+from btconfig.superconf import SuperDuperConfig
 from bertdotwebadapter import WebAdapter
 
 # Setup Logging

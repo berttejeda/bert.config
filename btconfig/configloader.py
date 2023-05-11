@@ -1,5 +1,5 @@
-from bertdotconfig.configutils import AttrDict
-from bertdotconfig.logger import Logger
+from btconfig.configutils import AttrDict
+from btconfig.logger import Logger
 import os
 import sys
 

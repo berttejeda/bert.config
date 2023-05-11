@@ -13,7 +13,7 @@ section1:
 ```
 - run `python example1.py`, where `example1.py` is<br />
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='myconfig1.yaml').read()
 value = config.get('section1.key1')
@@ -46,7 +46,7 @@ section2:
 ```
 - run `python example2.py`, where `example2.py` is<br />
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='myconfig2.yaml').read()
 value = config.get('section1.subsection1.item2')
@@ -91,7 +91,7 @@ section2:
 ```
 - run `python example3.py`, where `example3.py` is<br />
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='myconfig3.yaml').read()
 value = config.get('section2.*.item1')
@@ -123,7 +123,7 @@ section1:
 ```
 - run `python example4.py`, where `example4.py` is<br />
 ```python
-from bertdotconfig import Config
+from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='myconfig4.yaml').read()
 value = config.properties.section1.subsection1.subsubsection1.item2
