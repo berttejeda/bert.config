@@ -102,7 +102,7 @@ class ConfigLoader:
                 )
                 sys.exit(1)
             else:
-                logger.warning('No settings could be derived, using defaults')
+                logger.debug('No settings could be derived, using defaults')
                 config_data = self.default_value
 
         return config_data
