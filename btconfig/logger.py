@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import os
 import sys
 
 class Logger:
@@ -12,7 +13,8 @@ class Logger:
     # Setup Logging
     logger = logging.getLogger(name)
     # TODO Find a better approach to this hacky method
-    if '---debug' in ' '.join(sys.argv) or self.debug:
+    BTCONFIG_DEBUG = os.environ.get('BTCONFIG_DEBUG','').lower()
+    if BTCONFIG_DEBUG in ['true','yes','on','1'] or self.debug:
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
