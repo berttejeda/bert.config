@@ -4,6 +4,7 @@ from btconfig.configloader import ConfigLoader
 import sys
 from jinja2 import Template
 import yaml
+from pyaml_env import parse_config
 
 # Setup Logging
 logger = Logger().init_logger(__name__)
@@ -20,9 +21,9 @@ class SuperDuperConfig(ConfigLoader):
 
     try:
       if not config_content:
-        ymlfile_content = open(config_file_uri).read()
+        ymlfile_content = parse_config(config_file_uri)
       else:
-        ymlfile_content = config_content
+        ymlfile_content = parse_config(data=config_content)
       if self.templatized:
         try:
           ymlfile_template = Template(ymlfile_content)
@@ -40,8 +41,7 @@ class SuperDuperConfig(ConfigLoader):
             ymlfile_data = ymlfile_content
       else:
         ymlfile_data = ymlfile_content
-      cfg = yaml.safe_load(ymlfile_data)
-      config_dict = cfg[self.data_key] if self.data_key is not None else cfg
+      config_dict = ymlfile_data[self.data_key] if self.data_key is not None else ymlfile_data
       if isinstance(config_dict, dict):
         config_dict['config_file_uri'] = config_file_uri
       else:
