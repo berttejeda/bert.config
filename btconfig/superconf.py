@@ -1,10 +1,11 @@
 from btconfig.logger import Logger
 from btconfig.configutils import AttrDict
 from btconfig.configloader import ConfigLoader
+import os
 import sys
 from jinja2 import Template
 import yaml
-from pyaml_env import parse_config
+from string import Template
 
 # Setup Logging
 logger = Logger().init_logger(__name__)
@@ -21,9 +22,10 @@ class SuperDuperConfig(ConfigLoader):
 
     try:
       if not config_content:
-        ymlfile_content = parse_config(config_file_uri)
+        _ymlfile_content = open(config_file_uri).read()
       else:
-        ymlfile_content = parse_config(data=config_content)
+        _ymlfile_content = config_content
+      ymlfile_content = Template(_ymlfile_content).safe_substitute(os.environ)
       if self.templatized:
         try:
           ymlfile_template = Template(ymlfile_content)
@@ -41,7 +43,8 @@ class SuperDuperConfig(ConfigLoader):
             ymlfile_data = ymlfile_content
       else:
         ymlfile_data = ymlfile_content
-      config_dict = ymlfile_data[self.data_key] if self.data_key is not None else ymlfile_data
+      cfg = yaml.safe_load(ymlfile_data)
+      config_dict = cfg[self.data_key] if self.data_key is not None else cfg
       if isinstance(config_dict, dict):
         config_dict['config_file_uri'] = config_file_uri
       else:
