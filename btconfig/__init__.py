@@ -28,4 +28,5 @@ class Config(SuperDuperConfig):
     self.config_file_auth_password = kwargs.get('auth_password')
     self.configs_already_processed = []
     self.default_value = kwargs.get('default_value', {})
+    self.warn_if_config_not_found = kwargs.get('warn_if_config_not_found')
 
