@@ -3,7 +3,7 @@ from btconfig.configutils import AttrDict
 from btconfig.configloader import ConfigLoader
 import os
 import sys
-from jinja2 import Template
+from jinja2 import Template as JinjaTemplate
 import yaml
 from string import Template
 
@@ -28,7 +28,7 @@ class SuperDuperConfig(ConfigLoader):
       ymlfile_content = Template(_ymlfile_content).safe_substitute(os.environ)
       if self.templatized:
         try:
-          ymlfile_template = Template(ymlfile_content)
+          ymlfile_template = JinjaTemplate(ymlfile_content)
           ymlfile_data = ymlfile_template.render(
             session=self.initial_data
           )
