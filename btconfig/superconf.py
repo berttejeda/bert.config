@@ -25,7 +25,8 @@ class SuperDuperConfig(ConfigLoader):
         _ymlfile_content = open(config_file_uri).read()
       else:
         _ymlfile_content = config_content
-      ymlfile_content = Template(_ymlfile_content).safe_substitute(os.environ)
+      initial_template_data = {**self.initial_data, **os.environ}
+      ymlfile_content = Template(_ymlfile_content).safe_substitute(initial_template_data)
       if self.templatized:
         try:
           ymlfile_template = JinjaTemplate(ymlfile_content)
