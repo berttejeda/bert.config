@@ -1,5 +1,6 @@
 from btconfig.configutils import AttrDict
 from btconfig.logger import Logger
+import inspect
 import os
 import sys
 
@@ -47,6 +48,7 @@ class ConfigLoader:
             config_search_paths = [
                 os.path.realpath(os.path.expanduser('~')),
                 '.',
+                os.path.dirname(os.path.abspath(sys.argv[0])),
                 os.path.join(os.path.abspath(os.sep), 'etc')
             ]
             if self.extra_config_search_paths:
