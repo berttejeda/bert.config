@@ -31,7 +31,7 @@ class SuperDuperConfig(ConfigLoader):
         try:
           ymlfile_template = JinjaTemplate(ymlfile_content)
           ymlfile_data = ymlfile_template.render(
-            session=self.initial_data
+            self.initial_data
           )
         except Exception as e:
           logger.warning(
