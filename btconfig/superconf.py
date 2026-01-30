@@ -1,10 +1,12 @@
+import os
+import sys
+import yaml
+
 from btconfig.logger import Logger
 from btconfig.configutils import AttrDict
 from btconfig.configloader import ConfigLoader
-import os
-import sys
 from jinja2 import Template as JinjaTemplate
-import yaml
+from collections import defaultdict
 from string import Template
 
 # Setup Logging
@@ -25,8 +27,8 @@ class SuperDuperConfig(ConfigLoader):
         _ymlfile_content = open(config_file_uri).read()
       else:
         _ymlfile_content = config_content
-      initial_template_data = {**self.initial_data, **os.environ}
-      ymlfile_content = Template(_ymlfile_content).safe_substitute(initial_template_data)
+      initial_template_data = defaultdict(str, {**self.initial_data, **os.environ})
+      ymlfile_content = Template(_ymlfile_content).substitute(initial_template_data)
       if self.templatized:
         try:
           ymlfile_template = JinjaTemplate(ymlfile_content)
