@@ -28,8 +28,8 @@ class SuperDuperConfig(ConfigLoader):
       else:
         _ymlfile_content = config_content
       initial_template_data = defaultdict(str, {**self.initial_data, **os.environ})
-      ymlfile_content = Template(_ymlfile_content).substitute(initial_template_data)
       if self.templatized:
+        ymlfile_content = Template(_ymlfile_content).substitute(initial_template_data)
         try:
           ymlfile_template = JinjaTemplate(ymlfile_content)
           ymlfile_data = ymlfile_template.render(
@@ -43,9 +43,9 @@ class SuperDuperConfig(ConfigLoader):
           if self.failfast:
             sys.exit(1)
           else:
-            ymlfile_data = ymlfile_content
+            ymlfile_data = _ymlfile_content
       else:
-        ymlfile_data = ymlfile_content
+        ymlfile_data = _ymlfile_content
       cfg = yaml.safe_load(ymlfile_data)
       config_dict = cfg[self.data_key] if self.data_key is not None else cfg
       if isinstance(config_dict, dict):
