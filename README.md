@@ -42,7 +42,7 @@ section1:
 from btconfig import Config
 # Initialize App Config
 config = Config(config_file_uri='~/myconfig.yaml').read()
-value = config.get('section1.key')
+value = config.get('section1.key1')
 print(value)
 ```
 
@@ -116,14 +116,26 @@ The above should return `[{'subitem1': 'value1'}, 'value1']`
 
 Note: When retrieving values via wildcard, the return value is a list object.
 
-## Load a configuration file as a python object
+## Retrieve values via attribute access
 
-Same as the above examples, just invoke the Config object
-with `as_object=True`, as with 
-`config = Config('~/myconfig.yaml', as_object=True).read()`
-
-In this case, retrieving values from the object can be done via dot-notation, 
-as with: `print(config.section1.subsection1.item2)`, or via `get` method, as with
-`print(settings.section1.subsection1.item2)`
+The object returned by `read()` also supports attribute-style access, as with
+`print(config.section1.subsection1.item2)`, or via the `properties` attribute, as with
+`print(config.properties.section1.subsection1.item2)`
 
 Note: This approach does not support retrieving values via wildcard reference.
+
+## Templating
+
+Config files are only rendered as templates (`$VAR` substitution from the environment,
+followed by Jinja) when requested, as with
+`config = Config(config_file_uri='~/myconfig.yaml', templatized=True).read()`
+
+# Tests
+
+Run `pytest test.py`
+
+# TLS verification
+
+Configs fetched over HTTPS are certificate-checked by default.
+To load from a host with a self-signed certificate, pass `verify_tls=False`, as with
+`config = Config(config_file_uri='https://myhost/myconfig.yaml', verify_tls=False).read()`

@@ -1,10 +1,9 @@
 include AUTHORS.rst
 include requirements.txt
 include CONTRIBUTING.rst
-include HISTORY.md
+include CHANGELOG.md
 include LICENSE
 include README.md
-include ansible_taskrunner/lib/locale/en.yaml
 
 recursive-include tests *
 recursive-exclude * __pycache__
